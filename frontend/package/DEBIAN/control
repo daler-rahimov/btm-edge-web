@@ -1,0 +1,9 @@
+Package: ball-thrower-frontend
+Version: %VERSION%
+Section: misc
+Architecture: all
+Depends: nginx, lpa2
+Maintainer: daler.edu@gmail.com
+Priority: optional
+Description: Ball Thrower frontend
+ Frontend for Ball Thrower 

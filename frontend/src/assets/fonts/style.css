@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Aristotelica Display';
+    src: local('Aristotelica Display Ultra Light'), local('Aristotelica-Display-Ultra-Light'),
+        url('AristotelicaDisplayTrial-UltraL.woff2') format('woff2'),
+        url('AristotelicaDisplayTrial-UltraL.woff') format('woff'),
+        url('AristotelicaDisplayTrial-UltraL.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+  }
