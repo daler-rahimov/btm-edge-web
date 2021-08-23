@@ -24,9 +24,9 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 
-@app.get("/api/v1")
-async def root():
-    return {"message": "Hello World"}
+# @app.get("/api/v1")
+# async def root():
+#     return {"message": "Hello World"}
 
 
 # Routers
@@ -36,7 +36,12 @@ app.include_router(
     tags=["users"],
     dependencies=[Depends(get_current_active_user)],
 )
-app.include_router(ball_thrower_route, prefix="/api/v1", tags=["ball_thrower"])
+app.include_router(
+    ball_thrower_route,
+    prefix="/api/v1",
+    tags=["ball_thrower"],
+    dependencies=[Depends(get_current_active_user)],
+)
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
