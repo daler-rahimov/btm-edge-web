@@ -8,14 +8,14 @@ services:
       - 8000:80
     depends_on:
       - backend
-      # - frontend
+      - frontend
 
   postgres:
     image: postgres:12
     restart: always
     environment:
       POSTGRES_USER: btm_web
-      POSTGRES_PASSWORD: strong_pass
+      POSTGRES_PASSWORD: password
     ports:
       - '5432:5432'
     volumes:
@@ -32,20 +32,20 @@ services:
       - ./.docker/.ipython:/root/.ipython
     environment:
       PYTHONPATH: .
-      DATABASE_URL: 'postgresql://btm_web:strong_pass@postgres:5432/btm_web'
+      DATABASE_URL: 'postgresql://btm_web:password@postgres:5432/btm_web'
     depends_on:
       - "postgres"
 
-  # frontend:
-  #   build:
-  #     context: frontend
-  #     dockerfile: Dockerfile
-  #   stdin_open: true
-  #   volumes:
-  #     - './frontend:/app:cached'
-  #     - './frontend/node_modules:/app/node_modules:cached'
-  #   environment:
-  #     - NODE_ENV=development
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    stdin_open: true
+    volumes:
+      - './frontend:/app:cached'
+      - './frontend/node_modules:/app/node_modules:cached'
+    environment:
+      - NODE_ENV=development
 
 
 volumes:
