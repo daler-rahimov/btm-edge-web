@@ -3,15 +3,22 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import typing as t
 from serial import SerialException
-
-# from app.core.auth import get_current_active_user, get_current_active_superuser
-from app.ball_thrower_cotroller.ball_thrower import BallThrower
-from app.ball_thrower_cotroller.btm_serial_clint import ArduinoBtm
+import logging 
+logger = logging.getLogger(__name__)
 
 ball_thrower_route = r = APIRouter()
 
-btm_serial_api = ArduinoBtm("COM1", 19200)
-ball_thrower = BallThrower(btm_serial_api)
+# from app.core.auth import get_current_active_user, get_current_active_superuser
+from app.ball_thrower_cotroller.btm_serial_clint import ArduinoBtmClint
+from app.ball_thrower_cotroller.ball_thrower import BallThrower
+
+# TODO: move this to a loop where it can be re-initialized incase of failed connection 
+try:
+    from app.main import btm_serial_api
+    # btm_serial_api = ArduinoBtmClint("COM4")
+    ball_thrower = BallThrower(btm_serial_api)
+except Exception as ex:
+    logger.critical("Motor Controller connection error: {}".format(ex), exc_info=True)
 
 class Power(BaseModel):
     shot_power: int = Field(..., gt=-1, lt=101, 
@@ -52,7 +59,7 @@ async def get_spin():
         spin = Spin(spin=ball_thrower.get_spin())
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
-                "message": "Serial communication error. Check connection and try again",
+                "message": "Mottor Contoller communication error. Check connection and try again",
                 "serial_message": str(ex)
             }
         )
@@ -66,12 +73,10 @@ async def set_spin(spin: Spin = Body(...)):
     Set current set spin from -100% (which is back-spin) to +100% ( which is top-spin)
     """
     try:
-        if not ball_thrower.set_spin(spin.spin):
-            return JSONResponse(status_code=503, content={
-                "message": "Was not able to set 'SPIN'. Try again!"})
+        ball_thrower.set_spin(spin.spin)
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
-                "message": "Serial communication error. Check connection and try again",
+                "message": "Mottor Contoller communication error. Check connection and try again",
                 "serial_message": str(ex)
             }
         )
@@ -87,7 +92,7 @@ async def get_power():
         power = Power(shot_power=ball_thrower.get_power())
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
-                "message": "Serial communication error. Check connection and try again",
+                "message": "Mottor Contoller communication error. Check connection and try again",
                 "serial_message": str(ex)
             }
         )
@@ -101,12 +106,10 @@ async def set_power(power: Power= Body(...)):
     Set currently shot power from 0% to 100% 
     """
     try:
-        if not ball_thrower.set_power(power.shot_power):
-            return JSONResponse(status_code=503, content={
-                "message": "Was not able to set 'SHOT POWER'. Try again!"})
+        ball_thrower.set_power(power.shot_power)
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
-                "message": "Serial communication error. Check connection and try again",
+                "message": "Mottor Contoller communication error. Check connection and try again",
                 "serial_message": str(ex)
             }
         )

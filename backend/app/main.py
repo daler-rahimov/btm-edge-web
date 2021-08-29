@@ -9,7 +9,9 @@ from app.api.api_v1.routers.ball_thrower import ball_thrower_route
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
-
+ 
+from app.ball_thrower_cotroller.btm_serial_clint import ArduinoBtmClint
+btm_serial_api = None
 
 app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
@@ -46,4 +48,5 @@ app.include_router(
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 if __name__ == "__main__":
+    btm_serial_api = ArduinoBtmClint("COM4") # without this here it's getting openned 
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
