@@ -75,10 +75,10 @@ class ArduinoBtmClint():
     # def __enter__(self):
     #     return self
     
-    # def __exit__(self, exc_type, exc_value, traceback):
-    #     if self.serial_con:
-    #         if self.serial_con.is_open:
-    #             self.serial_con.close()
+    def __del__(self):
+        if self.serial_con:
+            if self.serial_con.is_open:
+                self.serial_con.close()
 
     def set_spin(self, spin: int):
         """Set Spin from -100% (back-spin) to +100% (top-spin)
