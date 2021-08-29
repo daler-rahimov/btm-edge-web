@@ -7,27 +7,29 @@ class BallThrower():
     def __init__(self, btm_serial_api: ArduinoBtmClint):
         self.btm_serial_api = btm_serial_api
 
-    def set_spin(self, spin: int) -> bool:
+    def set_spin(self, spin: int):
         """Set ball spin from 100% back-spin to 100% top-spin
 
-        Returns:
-            bool: True if was able to set False otherwise
+        Raises:
+            SerialException: error with the message  
         """
-        return self.btm_serial_api.set_spin(spin) 
+        self.btm_serial_api.set_spin(spin) 
 
-    def set_power(self, power: int) -> bool:
+    def set_power(self, power: int):
         """Set power of all the shots from 0% to 100%
 
-        Returns:
-            bool: True if was able to set False otherwise
+        Raises:
+            SerialException: error with the message  
         """
-        return self.btm_serial_api.set_power(power) 
+        self.btm_serial_api.set_power(power) 
 
     def get_spin(self) -> int:
         """Return spin from -100% to +100%
 
         Returns:
             int: spin in presentage
+        Raises:
+            SerialException: error with the message  
         """
         return self.btm_serial_api.get_spin()
 
@@ -37,5 +39,7 @@ class BallThrower():
 
         Returns:
             shot_power:  currelnly set shot power 
+        Raises:
+            SerialException: error with the message  
         """
         return self.btm_serial_api.get_power()

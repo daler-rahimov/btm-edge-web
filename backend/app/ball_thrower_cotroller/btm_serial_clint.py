@@ -3,6 +3,7 @@ import serial
 from serial import SerialException
 import bitstring
 import logging 
+import threading
 logger = logging.getLogger(__name__)
 
 # Arduino CMD prefixes 
@@ -26,24 +27,58 @@ ERROR_EXPLANATION = {
     -8: "Incorrect value given for Set command",
 }
 
-SERIAL_CON = serial.Serial()
 
 class ArduinoBtmClint():
-
-
-    @staticmethod
-    def to_int8(byte: int ) -> int:
-        bit = bitstring.Bits(uint=byte, length=8)
-        return bit.unpack('int')[0]
-
+    _instances = [] # All instance of this class
+    _lock = threading.Lock()
 
     def __init__ (self, serial_dev):
-        if not SERIAL_CON.is_open: 
-            logger.info("Openning serial connection to Arduino dev_name: {}".format(serial_dev))
-            SERIAL_CON.baudrate = 115200
-            SERIAL_CON.port = serial_dev 
-            SERIAL_CON.open()
 
+        if not hasattr(self, "serial_con") :
+            self.serial_con = serial.Serial()
+            self.serial_con.port = serial_dev
+            self.serial_con.baudrate = 115200
+
+
+    def open_serial_port(self):
+        try:
+            if not self.serial_con.is_open:
+                self.serial_con.open()
+        except Exception as ex: 
+            logger.error("Was not able to open or reopen serial connection: {}"
+                .format(self.serial_con.port), exc_info=True)
+        finally:
+            logger.info("Serial connection to {} ... successful.".format(self.serial_con.port))
+
+    def close_serial_port(self):
+        if self.serial_con.is_open:
+            self.serial_con.close()
+
+
+    def __new__(cls, *args, **kwargs):
+        if len(kwargs) > 0:
+            raise TypeError(
+                f"{cls}. only allows positional arguments. Found "
+                f"the following keyword arguments: {kwargs}"
+            )
+        instance = None
+        with cls._lock:
+            for i in cls._instances:
+                if i.serial_con.port == args[0]: # if trying to open same port again 
+                    instance = i 
+            if instance == None:
+                instance = super(ArduinoBtmClint, cls).__new__(cls)
+                cls._instances.append(instance)
+        return instance
+
+
+    # def __enter__(self):
+    #     return self
+    
+    # def __exit__(self, exc_type, exc_value, traceback):
+    #     if self.serial_con:
+    #         if self.serial_con.is_open:
+    #             self.serial_con.close()
 
     def set_spin(self, spin: int):
         """Set Spin from -100% (back-spin) to +100% (top-spin)
@@ -107,8 +142,8 @@ class ArduinoBtmClint():
             SerialException: error with the message  
         """
         print("cmd given: {}".format(cmd_arduino))
-        SERIAL_CON.write(cmd_arduino)
-        r_bytes = SERIAL_CON.read(1)
+        self.serial_con.write(cmd_arduino)
+        r_bytes = self.serial_con.read(1)
         r_code = ArduinoBtmClint.to_int8(r_bytes[0])
         self.check_arduino_error(r_code)
         return r_code 
@@ -126,3 +161,9 @@ class ArduinoBtmClint():
         """
         if r_code in ERROR_EXPLANATION:
             raise SerialException(ERROR_EXPLANATION[r_code])
+    
+    
+    @staticmethod
+    def to_int8(byte: int ) -> int:
+        bit = bitstring.Bits(uint=byte, length=8)
+        return bit.unpack('int')[0]

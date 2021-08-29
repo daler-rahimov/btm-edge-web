@@ -9,16 +9,8 @@ logger = logging.getLogger(__name__)
 ball_thrower_route = r = APIRouter()
 
 # from app.core.auth import get_current_active_user, get_current_active_superuser
-from app.ball_thrower_cotroller.btm_serial_clint import ArduinoBtmClint
-from app.ball_thrower_cotroller.ball_thrower import BallThrower
+from app.ball_thrower_cotroller import ball_thrower
 
-# TODO: move this to a loop where it can be re-initialized incase of failed connection 
-try:
-    from app.main import btm_serial_api
-    # btm_serial_api = ArduinoBtmClint("COM4")
-    ball_thrower = BallThrower(btm_serial_api)
-except Exception as ex:
-    logger.critical("Motor Controller connection error: {}".format(ex), exc_info=True)
 
 class Power(BaseModel):
     shot_power: int = Field(..., gt=-1, lt=101, 

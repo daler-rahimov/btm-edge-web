@@ -1,6 +1,6 @@
 ## Windows powershell PYTHONENV setup
 ```powerhsell
-PS C:\Users\spearsc> $env:PYTHONPATH = "D:/localenv"
+PS C:\Users\spearsc> $env:PYTHONPATH = "."
 PS C:\Users\spearsc> Get-ChildItem Env:PYTHONPATH
 
 <!-- This is for PostgresSQL you can run it with docker-compose -->
