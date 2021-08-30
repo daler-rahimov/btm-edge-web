@@ -63,11 +63,7 @@ def test_edit_user_not_found(client, test_db, superuser_token_headers):
     assert response.status_code == 404
 
 
-def test_get_user(
-    client,
-    test_user,
-    superuser_token_headers,
-):
+def test_get_user( client, test_user, superuser_token_headers,):
     response = client.get(
         f"/api/v1/users/{test_user.id}", headers=superuser_token_headers
     )

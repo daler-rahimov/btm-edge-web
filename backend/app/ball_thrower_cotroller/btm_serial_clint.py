@@ -35,26 +35,28 @@ class ArduinoBtmClint():
     def __init__ (self, serial_dev):
 
         if not hasattr(self, "serial_con") :
-            self.serial_con = serial.Serial()
-            self.serial_con.port = serial_dev
-            self.serial_con.baudrate = 115200
+            self._serial_con = serial.Serial()
+            self._serial_con.port = serial_dev
+            self._serial_con.baudrate = 115200
 
 
     def open_serial_port(self):
         try:
-            if not self.serial_con.is_open:
-                self.serial_con.open()
+            if not self._serial_con.is_open:
+                self._serial_con.open()
         except Exception as ex: 
             logger.error("Was not able to open or reopen serial connection: {}"
-                .format(self.serial_con.port), exc_info=True)
+                .format(self._serial_con.port), exc_info=True)
         finally:
-            logger.info("Serial connection to {} ... successful.".format(self.serial_con.port))
+            logger.info("Serial connection to {} ... successful.".format(self._serial_con.port))
 
     def close_serial_port(self):
-        if self.serial_con.is_open:
-            self.serial_con.close()
-
-
+        try:
+            if self._serial_con.is_open:
+                self._serial_con.close()
+        except: 
+            logger.error("Was not able to close serial port", exc_info=True)
+            
     def __new__(cls, *args, **kwargs):
         if len(kwargs) > 0:
             raise TypeError(
@@ -71,14 +73,11 @@ class ArduinoBtmClint():
                 cls._instances.append(instance)
         return instance
 
-
-    # def __enter__(self):
-    #     return self
     
     def __del__(self):
-        if self.serial_con:
-            if self.serial_con.is_open:
-                self.serial_con.close()
+        if self._serial_con:
+            if self._serial_con.is_open:
+                self._serial_con.close()
 
     def set_spin(self, spin: int):
         """Set Spin from -100% (back-spin) to +100% (top-spin)
@@ -142,8 +141,8 @@ class ArduinoBtmClint():
             SerialException: error with the message  
         """
         print("cmd given: {}".format(cmd_arduino))
-        self.serial_con.write(cmd_arduino)
-        r_bytes = self.serial_con.read(1)
+        self._serial_con.write(cmd_arduino)
+        r_bytes = self._serial_con.read(1)
         r_code = ArduinoBtmClint.to_int8(r_bytes[0])
         self.check_arduino_error(r_code)
         return r_code 

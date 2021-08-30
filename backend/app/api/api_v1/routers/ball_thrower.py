@@ -33,7 +33,7 @@ SER_ERROR_CODE = 333
 serial_com_error = {
     SER_ERROR_CODE: {
         "model": SerialMessage,
-        "description": "Serial Comunication Error",
+        "description": "Motor Controller Serial Port comunication error",
         }
 }
 

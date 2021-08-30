@@ -1,6 +1,7 @@
 venv*/
 .docker*/
 .devcontainer/
+tmp*
 
 ## GitHub Template 
 # *******************************

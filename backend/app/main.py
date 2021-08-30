@@ -1,3 +1,4 @@
+from app.api.api_v1.routers import ball_thrower
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
 import uvicorn
@@ -8,7 +9,7 @@ from app.api.api_v1.routers.ball_thrower import ball_thrower_route
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
-from app.ball_thrower_cotroller import btm_serial_api
+import app.ball_thrower_cotroller as ball_thrower_api 
 
 app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
@@ -23,9 +24,9 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 
-# @app.get("/api/v1")
-# async def root():
-#     return {"message": "Hello World"}
+@app.get("/api/v1")
+async def root():
+    return {"message": "Hello World"}
 
 
 # Routers
@@ -37,18 +38,18 @@ app.include_router(
 )
 app.include_router(
     ball_thrower_route,
-    prefix="/api/v1",
+    prefix="/api/v1/ball_thrower",
     tags=["ball_thrower"],
     dependencies=[Depends(get_current_active_user)],
 )
 
 @app.on_event("startup")
 def init_stuff() -> None:
-    btm_serial_api.open_serial_port() # so serial port is openned only ones even if --reload
+    ball_thrower_api.init()
 
 @app.on_event("shutdown")
 def shutdown_event():
-    btm_serial_api.close_serial_port()
+    ball_thrower_api.discruct()
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
