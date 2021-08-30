@@ -8,8 +8,7 @@ logger = logging.getLogger(__name__)
 
 ball_thrower_route = r = APIRouter()
 
-# from app.core.auth import get_current_active_user, get_current_active_superuser
-from app.ball_thrower_cotroller import ball_thrower
+import app.ball_thrower_cotroller as btc # this type of import insures pytest patch
 
 
 class Power(BaseModel):
@@ -48,7 +47,7 @@ async def get_spin():
     Get current set spin from -100% (which is back-spin) to +100% ( which is top-spin)
     """
     try:
-        spin = Spin(spin=ball_thrower.get_spin())
+        spin = Spin(spin=btc.ball_thrower.get_spin())
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
                 "message": "Mottor Contoller communication error. Check connection and try again",
@@ -65,7 +64,7 @@ async def set_spin(spin: Spin = Body(...)):
     Set current set spin from -100% (which is back-spin) to +100% ( which is top-spin)
     """
     try:
-        ball_thrower.set_spin(spin.spin)
+        btc.ball_thrower.set_spin(spin.spin)
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
                 "message": "Mottor Contoller communication error. Check connection and try again",
@@ -81,7 +80,7 @@ async def get_power():
     Get currently set shot power from 0% to 100% 
     """
     try:
-        power = Power(shot_power=ball_thrower.get_power())
+        power = Power(shot_power=btc.ball_thrower.get_power())
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
                 "message": "Mottor Contoller communication error. Check connection and try again",
@@ -98,7 +97,7 @@ async def set_power(power: Power= Body(...)):
     Set currently shot power from 0% to 100% 
     """
     try:
-        ball_thrower.set_power(power.shot_power)
+        btc.ball_thrower.set_power(power.shot_power)
     except SerialException as ex:
         return JSONResponse(status_code=SER_ERROR_CODE, content={
                 "message": "Mottor Contoller communication error. Check connection and try again",
