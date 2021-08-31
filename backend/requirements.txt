@@ -19,3 +19,5 @@ python-multipart==0.0.5
 pyjwt==1.7.1
 pyserial==3.5
 bitstring==3.1.9
+loguru==0.5.3
+colorlog==5.0.1

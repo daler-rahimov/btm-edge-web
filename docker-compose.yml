@@ -33,6 +33,7 @@ services:
     environment:
       PYTHONPATH: .
       DATABASE_URL: 'postgresql://btm_web:password@postgres:5432/btm_web'
+      CONFIG_NAME: 'devel' # TODO: Remove for prod
     depends_on:
       - "postgres"
 

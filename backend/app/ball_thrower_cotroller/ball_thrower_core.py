@@ -19,7 +19,7 @@ ERROR_EXPLANATION = {
     -1: "There was an internal error",
     -2: "No such Shot",
     -3: "Command incorrect format ",
-    -4: "Partianl command was given",
+    -4: "Partial command was given",
     -5: "Mode was not set",
     -6: "No such command",
     -7: "Not implemented",

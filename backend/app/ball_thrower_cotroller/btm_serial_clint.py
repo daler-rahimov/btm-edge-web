@@ -24,7 +24,7 @@ class ArduinoBtmClint():
         except Exception as ex: 
             logger.error("Was not able to open or reopen serial connection: {}"
                 .format(self._serial_con.port), exc_info=True)
-        finally:
+        else:
             logger.info("Serial connection to {} ... successful.".format(self._serial_con.port))
 
     def close_serial_port(self):
@@ -71,3 +71,12 @@ class ArduinoBtmClint():
         r_bytes = self._serial_con.read(1)
         r_code = ArduinoBtmClint.to_int8(r_bytes[0])
         return r_code 
+
+
+class ArduinoBtmClintMock():
+    """For mocking Arduino device for test and devel envs  
+    """
+    def __init__ (self, serial_dev): ... 
+    def open_serial_port(self): ... 
+    def close_serial_port(self): ... 
+    def send_cmd(self, cmd_arduino: list) -> int: return 0 

@@ -7,11 +7,11 @@ logger = logging.getLogger(__name__)
 from app.ball_thrower_cotroller.ball_thrower_core import ERROR_EXPLANATION
 pars = [(k, v) for k, v in ERROR_EXPLANATION.items()]
 
+from app.ball_thrower_cotroller.btm_serial_clint import ArduinoBtmClintMock
 
 @pytest.mark.parametrize("test_input,expected", pars)
 def test_bt_exceptions(client, superuser_token_headers, monkeypatch, test_input, expected):
-    class ArduinoBtmClintStub():
-        def __init__ (self, serial_dev):...
+    class ArduinoBtmClintStub(ArduinoBtmClintMock):
         def send_cmd(self, spin: int): return test_input; 
     btm_serial_api_stub = ArduinoBtmClintStub("COM4")  
     ball_thrower_stub = BallThrower(btm_serial_api_stub)
@@ -39,8 +39,7 @@ def test_bt_exceptions(client, superuser_token_headers, monkeypatch, test_input,
 
 def test_get_spin(client, superuser_token_headers, monkeypatch):
     VAL = 10
-    class ArduinoBtmClintStub():
-        def __init__ (self, serial_dev):...
+    class ArduinoBtmClintStub(ArduinoBtmClintMock):
         def send_cmd(self, spin: int): return VAL; 
     btm_serial_api_stub = ArduinoBtmClintStub("COM4")  
     ball_thrower_stub = BallThrower(btm_serial_api_stub)
@@ -54,8 +53,7 @@ def test_get_spin(client, superuser_token_headers, monkeypatch):
 
 def test_get_power(client, superuser_token_headers, monkeypatch):
     VAL = 10
-    class ArduinoBtmClintStub():
-        def __init__ (self, serial_dev):...
+    class ArduinoBtmClintStub(ArduinoBtmClintMock):
         def send_cmd(self, spin: int): return VAL; 
     btm_serial_api_stub = ArduinoBtmClintStub("COM4")  
     ball_thrower_stub = BallThrower(btm_serial_api_stub)
@@ -69,8 +67,7 @@ def test_get_power(client, superuser_token_headers, monkeypatch):
 
 def test_put_spin(client, superuser_token_headers, monkeypatch):
     VAL = 10
-    class ArduinoBtmClintStub():
-        def __init__ (self, serial_dev):...
+    class ArduinoBtmClintStub(ArduinoBtmClintMock):
         def send_cmd(self, spin: int): return 0; 
     btm_serial_api_stub = ArduinoBtmClintStub("COM4")  
     ball_thrower_stub = BallThrower(btm_serial_api_stub)
@@ -92,8 +89,7 @@ def test_put_spin(client, superuser_token_headers, monkeypatch):
 
 def test_put_power(client, superuser_token_headers, monkeypatch):
     VAL = 10
-    class ArduinoBtmClintStub():
-        def __init__ (self, serial_dev):...
+    class ArduinoBtmClintStub(ArduinoBtmClintMock):
         def send_cmd(self, spin: int): return 0; 
     btm_serial_api_stub = ArduinoBtmClintStub("COM4")  
     ball_thrower_stub = BallThrower(btm_serial_api_stub)
