@@ -21,6 +21,11 @@ The only dependencies for this project should be docker and docker-compose.
 Starting the project with hot-reloading enabled
 (the first time it will take a while):
 
+#### One time 
+```bash
+./scripts/build.sh
+```
+#### And then you can just use
 ```bash
 docker-compose up -d
 ```
